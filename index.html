@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Palpite do Dia</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 420px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    h2 {
+      color: #7e57c2;
+      margin-bottom: 20px;
+    }
+    .palpite-item {
+      font-size: 20px;
+      margin: 12px 0;
+      font-weight: bold;
+      color: #333;
+    }
+    .frase {
+      margin-top: 24px;
+      font-style: italic;
+      color: #666;
+      font-size: 16px;
+    }
+    .number {
+      display: inline-block;
+      min-width: 50px;
+      transition: transform 0.4s ease-in-out;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .animar {
+      animation: girar 0.6s ease-in-out;
+    }
+
+    @keyframes girar {
+      0% { transform: translateY(0px); opacity: 1; }
+      50% { transform: translateY(-20px); opacity: 0.5; }
+      100% { transform: translateY(0px); opacity: 1; }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 16px;
+      }
+      .palpite-item {
+        font-size: 18px;
+      }
+      .frase {
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🔮 Palpite do Dia</h2>
+    <div class="palpite-item">🐾 Milhar: <span id="milhar" class="number">0000</span></div>
+    <div class="palpite-item">🎯 Centena: <span id="centena" class="number">000</span></div>
+    <div class="palpite-item">🎈 Dezena: <span id="dezena" class="number">00</span></div>
+    <div class="palpite-item">🦁 Grupo: <span id="grupo" class="number">00 - ???</span></div>
+    <p class="frase" id="frase">"Carregando sorte..."</p>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const grupos = {
+        1: "Avestruz", 2: "Águia", 3: "Burro", 4: "Borboleta", 5: "Cachorro",
+        6: "Cabra", 7: "Carneiro", 8: "Camelo", 9: "Cobra", 10: "Coelho",
+        11: "Cavalo", 12: "Elefante", 13: "Galo", 14: "Gato", 15: "Jacaré",
+        16: "Leão", 17: "Macaco", 18: "Porco", 19: "Pavão", 20: "Peru",
+        21: "Touro", 22: "Tigre", 23: "Urso", 24: "Veado", 25: "Vaca"
+      };
+
+      const frases = [
+        "Hoje a sorte sorri para os audaciosos!",
+        "Acredite no seu pressentimento.",
+        "Você está mais perto da sorte do que imagina.",
+        "Confie no seu palpite de hoje.",
+        "Nada é por acaso, tudo tem seu momento.",
+        "A sorte acompanha quem tem coragem.",
+        "Siga o seu instinto, ele sabe o caminho.",
+        "Dias de sorte começam com fé.",
+        "A intuição é seu maior guia.",
+        "Quem tenta, pode vencer hoje!"
+      ];
+
+      function gerarNumero(digitos, seed) {
+        const hoje = new Date();
+        const base = parseInt(hoje.toISOString().slice(0, 10).replace(/-/g, '')) + seed;
+        const hash = Math.abs(Math.sin(base * seed) * 10000);
+        const numero = Math.floor(hash % Math.pow(10, digitos));
+        return numero.toString().padStart(digitos, '0');
+      }
+
+      function animarElemento(id, novoValor) {
+        const el = document.getElementById(id);
+        el.classList.remove('animar');
+        void el.offsetWidth; // força reflow para reiniciar animação
+        el.textContent = novoValor;
+        el.classList.add('animar');
+      }
+
+      function gerarPalpite() {
+        animarElemento("milhar", gerarNumero(4, 1));
+        animarElemento("centena", gerarNumero(3, 2));
+        animarElemento("dezena", gerarNumero(2, 3));
+
+        const grupoNum = parseInt(gerarNumero(2, 4)) % 25 + 1;
+        const grupoNome = grupos[grupoNum] || "???";
+        animarElemento("grupo", grupoNum.toString().padStart(2, '0') + " - " + grupoNome);
+
+        const frase = frases[new Date().getDate() % frases.length];
+        document.getElementById("frase").textContent = `"${frase}"`;
+      }
+
+      gerarPalpite();
+    });
+  </script>
+</body>
+</html>
